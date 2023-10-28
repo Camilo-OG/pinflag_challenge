@@ -2,7 +2,7 @@
   "name": "pinflag-node-js-challenge",
   "version": "1.0.0",
   "description": "Pinflag test API",
-  "main": "index.js",
+  "main": "./build/index.js",
   "scripts": {
     "lint": "eslint --fix src",
     "build": "babel src --ignore src/tests --out-dir build --copy-files --no-copy-ignored --source-maps inline",
