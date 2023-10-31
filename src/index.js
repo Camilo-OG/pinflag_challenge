@@ -1,5 +1,5 @@
 import express from 'express'
-
+import swaggerDocs from './documents/swagger'
 import './config/environment'
 import routes from './routes'
 import './models'
@@ -13,6 +13,7 @@ app.use('/', routes)
 const startServer = () => {
   app.listen(port, () => {
     console.log(`API running on http://127.0.0.1:${port}/`)
+    swaggerDocs(app, port)
   })
 }
 
