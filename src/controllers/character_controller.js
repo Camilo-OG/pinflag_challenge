@@ -1,42 +1,34 @@
-import axios from 'axios'
 import models from '../models'
 import BaseController from './base'
 import { Op } from 'sequelize'
+import apiCall from '../utils/apiCall'
+import filterResponse from '../utils/filterResponse'
+import numberToString from '../utils/numberToString'
 
 export default class CharacterController extends BaseController {
   CharacterController () { }
 
   async index (req, res) {
-    const numero = req.body.numero
+    const numero = req.params.numero
 
-    if (numero <= 0) {
+    if (numero <= 0 || numero >= 826 || isNaN(numero)) {
       return super.ErrorBadRequest(res, 'El numero ingresado no es valido')
     }
 
-    const arrOfNumeros = []
-    for (let i = 1; i <= numero; i++) {
-      arrOfNumeros.push(i)
-    }
-
-    const param = arrOfNumeros.join(',')
-    console.log(param)
+    const numDeCharacters = numberToString(numero)
 
     try {
-      const data = await axios({
-        method: 'get',
-        url: `https://rickandmortyapi.com/api/character/${param}`
-      })
-      const response = data.data
-      const filteredResponse = []
-      response.forEach((character) => {
-        const findedCharacter = {
-          name: character.name,
-          status: character.status,
-          species: character.species,
-          origin: character.origin.name
+      const response = await apiCall.searchByNumber(numDeCharacters)
+      if (numDeCharacters === '1') {
+        const filteredResponse = {
+          name: response.name,
+          status: response.status,
+          species: response.species,
+          origin: response.origin.name
         }
-        return filteredResponse.push(findedCharacter)
-      })
+        return super.Success(res, filteredResponse)
+      }
+      const filteredResponse = filterResponse(response)
       return super.Success(res, filteredResponse)
     } catch (error) {
       return super.NotFound(res, `No se ha podido conectar a la API: ${error}`)
@@ -65,7 +57,7 @@ export default class CharacterController extends BaseController {
   }
 
   async show (req, res) {
-    const searchedName = req.body.name
+    const searchedName = req.params.nombre
 
     if (!searchedName) {
       return super.ErrorBadRequest(res, 'Todos los campos son obligatorios')
@@ -80,27 +72,20 @@ export default class CharacterController extends BaseController {
       })
       if (searchedCharacter === null) {
         try {
-          const data = await axios({
-            method: 'get',
-            url: `https://rickandmortyapi.com/api/character/?name=${searchedName}`
-          })
-          const response = data.data.results
-          const filteredResponse = []
-          response.map((character) => {
-            const findedCharacter = {
-              name: character.name,
-              status: character.status,
-              species: character.species,
-              origin: character.origin.name
-            }
-            return filteredResponse.push(findedCharacter)
-          })
+          const response = await apiCall.searchByName(searchedName)
+          const filteredResponse = filterResponse(response)
           return super.Success(res, filteredResponse)
         } catch (error) {
           return super.ErrorBadRequest(res, `algo no salio bien, ${error}`)
         }
       } else {
-        return super.Success(res, searchedCharacter)
+        const filteredResponse = {
+          name: searchedCharacter.name,
+          status: searchedCharacter.status,
+          species: searchedCharacter.species,
+          origin: searchedCharacter.origin
+        }
+        return super.Success(res, filteredResponse)
       }
     } catch (error) {
       return super.NotFound(res, `Algo ha salido mal: ${error}`)

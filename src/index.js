@@ -17,3 +17,5 @@ const startServer = () => {
 }
 
 startServer()
+
+export default app
