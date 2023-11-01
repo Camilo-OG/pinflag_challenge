@@ -1,0 +1,184 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Pinflag API",
+    "description": "API para buscar personajes de Rick and Morty desde una base de datos local y una base de datos externa.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:5000",
+      "description": "Servidor de desarrollo"
+    }
+  ],
+  "tags": [
+    {
+      "name": "characters",
+      "description": "Operaciones relacionadas con los personajes de Rick and Morty"
+    }
+  ],
+  "paths": {
+    "/character/buscar/{numero}": {
+      "get": {
+        "summary": "Buscar personajes de Rick and Morty por número.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "numero",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Número del personaje a buscar."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Respuesta exitosa con información del personaje.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Nombre del personaje."
+                    },
+                    "status": {
+                      "type": "string",
+                      "description": "Estado del personaje."
+                    },
+                    "species": {
+                      "type": "string",
+                      "description": "Especie del personaje."
+                    },
+                    "origin": {
+                      "type": "string",
+                      "description": "Nombre del lugar de origen del personaje."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "El número ingresado no es válido."
+          },
+          "404": {
+            "description": "No se ha podido conectar a la API de Rick and Morty."
+          }
+        }
+      }
+    },
+    "/character/create": {
+      "post": {
+        "summary": "Crea un nuevo personaje de Rick and Morty en la base de datos local.",
+        "requestBody": {
+          "description": "Datos del nuevo personaje.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Nombre del personaje."
+                  },
+                  "status": {
+                    "type": "string",
+                    "description": "Estado del personaje."
+                  },
+                  "species": {
+                    "type": "string",
+                    "description": "Especie del personaje."
+                  },
+                  "origin": {
+                    "type": "string",
+                    "description": "Nombre del lugar de origen del personaje."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Personaje creado con éxito.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Mensaje de éxito."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Campos obligatorios faltantes o inválidos."
+          },
+          "404": {
+            "description": "No se ha podido conectar a la API."
+          }
+        }
+      }
+    },
+    "/character/existe/{nombre}": {
+      "get": {
+        "summary": "Busca un personaje de Rick and Morty por nombre.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "nombre",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Nombre del personaje a buscar."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Búsqueda exitosa. Devuelve información del personaje.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Nombre del personaje."
+                    },
+                    "status": {
+                      "type": "string",
+                      "description": "Estado del personaje."
+                    },
+                    "species": {
+                      "type": "string",
+                      "description": "Especie del personaje."
+                    },
+                    "origin": {
+                      "type": "string",
+                      "description": "Nombre del lugar de origen del personaje."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "El nombre de búsqueda es obligatorio."
+          },
+          "404": {
+            "description": "No se encontró el personaje en la base de datos ni en la API de Rick and Morty."
+          }
+        }
+      }
+    }
+  }
+}
